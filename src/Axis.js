@@ -109,7 +109,8 @@ export default class Axis extends Component {
     const textStyle = fontAdapt(options.label)
 
     const ticks =_.map(axis.ticks, function (c, i) {
-      const label = options.labelComponent !== undefined? React.cloneElement(options.labelComponent,{value:c}) : c
+      let label = options.getCustomLabel ? options.getCustomLabel(c) : c;
+      label = options.labelComponent !== undefined? React.cloneElement(options.labelComponent,{value:label}) : label
       let gxy = horizontal ? [scale(c),chartArea.y.min]:[chartArea.x.min,scale(c)]
 
       let returnValue = <G key={i} x={gxy[0]} y={gxy[1]}>

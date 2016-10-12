@@ -114,17 +114,33 @@ export default class BarChart extends Component {
     let textStyle = fontAdapt(options.axisX.label)
 
     let lines = chart.curves.map(function (c, i) {
-      let color = this.color(i % 3)
-      let stroke = Colors.darkenColor(color)
+      let color = c.item.color || this.props.options.color || this.color(i % 3);
+      let stroke = Colors.darkenColor(color);
+
       return (
                 <G key={'lines' + i}>
                     <Path  d={ c.line.path.print() } stroke={stroke} fill={color}/>
                     {options.axisX.showLabels ?
-                        <G x={options.margin.left} y={options.margin.top}>
+                        <G x={options.margin.left + 5} y={options.margin.top}>
                         <Text fontFamily={textStyle.fontFamily}
                         fontSize={textStyle.fontSize} fontWeight={textStyle.fontWeight} fontStyle={textStyle.fontStyle}
-                        fill={textStyle.fill} x={c.line.centroid[0]} y={chartArea.y.min + 25} rotate={45} textAnchor="middle">{c.item.name}</Text></G>
-                        :null}
+                        fill={textStyle.fill} x={c.line.centroid[0]} y={chartArea.y.min + 25} rotate={145} textAnchor="middle">{(options.axisX.getCustomLabel ? options.axisX.getCustomLabel(c.item.name) : c.item.name).toString()}</Text></G>
+                    :null}
+                    {options.options.showValueLabels ?
+                      <Text
+                        fontFamily={textStyle.fontFamily}
+                        fontSize={14}
+                        fontWeight={textStyle.fontWeight}
+                        fontStyle={textStyle.fontStyle}
+                        fill={"#fff"}
+                        x={c.line.centroid[0] + 30}
+                        y={c.line.centroid[1]}
+                        rotate={0}
+                        textAnchor="middle"
+                        >
+                        {(options.options.formatValue ? options.options.formatValue(c.item.v) : c.item.v).toString()}
+                      </Text>
+                    : null}
                 </G>
             )
     }, this)
